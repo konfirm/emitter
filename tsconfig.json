@@ -1,0 +1,10 @@
+{
+	"include": [
+		"source/main.ts"
+	],
+	"compilerOptions": {
+		"declaration": true,
+		"outDir": "dist/",
+		"target": "es6"
+	}
+}
