@@ -1,5 +1,5 @@
 import { EmissionInterface } from "../Contract/EmissionInterface";
-import { EmitterListener } from "../Contract/EmitterListener";
+import { EmitterListenerInterface } from "../Contract/EmitterListenerInterface";
 import { Collection } from "./Collection";
 
 type ListenerRecord<T> = {
@@ -8,7 +8,7 @@ type ListenerRecord<T> = {
 	limit: number;
 }
 
-export class Emitter<T extends { [K in EmissionInterface['type']]: EmissionInterface }> implements EmitterListener<T> {
+export class Emitter<T extends { [K in EmissionInterface['type']]: EmissionInterface }> implements EmitterListenerInterface<T> {
 	on(type: keyof T, listener: (emission: T[keyof T]) => void): void {
 		Collection.for<ListenerRecord<T>>(this).push({ type, listener, limit: Infinity });
 	}
