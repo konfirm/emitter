@@ -1,4 +1,4 @@
 export interface EmissionInterface {
-	readonly type: string;
+	readonly type: string | symbol;
 	readonly timestamp: number;
 }
