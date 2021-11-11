@@ -1,5 +1,5 @@
-import { Emission } from "./Emission";
+import { EmissionInterface } from "./EmissionInterface";
 
-export type EmissionMap<T extends { [K in Emission['type']]: Emission }> = {
-	[K in keyof T]: Emission;
+export type EmissionMap<T extends { [K in EmissionInterface['type']]: EmissionInterface }> = {
+	[K in keyof T]: EmissionInterface;
 }

@@ -1,9 +1,9 @@
 import test from 'tape';
-import { Emission } from '../../../source/Domain/Contract/Emission';
+import { EmissionInterface } from '../../../source/Domain/Contract/EmissionInterface';
 import { EmissionMapper } from '../../../source/Domain/Contract/EmissionMapper';
 import { Emitter } from '../../../source/Domain/Entity/Emitter';
 
-interface SampleEmission extends Emission {
+interface SampleEmission extends EmissionInterface {
 	type: `sample-${'a' | 'b'}`;
 	sample: number;
 }
