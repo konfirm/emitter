@@ -31,10 +31,10 @@ export class Emitter<T extends { [K in EmissionInterface['type']]: EmissionInter
 			const trap = () => true;
 			const timestamp = Date.now();
 			const proxy = new Proxy({ ...emission, timestamp } as T[keyof T], {
-				set: () => true,
-				defineProperty: () => true,
-				deleteProperty: () => true,
-				setPrototypeOf: () => true,
+				set: trap,
+				defineProperty: trap,
+				deleteProperty: trap,
+				setPrototypeOf: trap,
 			});
 
 			candidates.forEach((record) => {
