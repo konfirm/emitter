@@ -6,6 +6,13 @@
 	"main": "dist/emitter.cjs.js",
 	"module": "dist/emitter.es.js",
 	"types": "dist/emitter.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/konfirm/emitter.git"
+	},
+	"bugs": {
+		"url": "https://github.com/konfirm/emitter/issues"
+	},
 	"scripts": {
 		"test": "run-script-os",
 		"test:nix": "ts-node node_modules/tape/bin/tape 'test/**/*.ts'",
