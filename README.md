@@ -1,5 +1,5 @@
-![tests](https://github.com/konfirm/guards/emitter/workflows/tests.yml/badge.svg)
-![release](https://github.com/konfirm/guards/emitter/workflows/release.yml/badge.svg)
+![tests](https://github.com/konfirm/emitter/actions/workflows/tests.yml/badge.svg)
+![release](https://github.com/konfirm/emitter/actions/workflows/release.yml/badge.svg)
 
 # Emitter
 
