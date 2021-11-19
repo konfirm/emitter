@@ -1,3 +1,6 @@
+![tests](https://github.com/konfirm/guards/emitter/workflows/tests.yml/badge.svg)
+![release](https://github.com/konfirm/guards/emitter/workflows/release.yml/badge.svg)
+
 # Emitter
 
 A simple and easy to use Emitter library.
