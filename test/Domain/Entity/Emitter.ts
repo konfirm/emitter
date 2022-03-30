@@ -18,7 +18,7 @@ test('Domain/Entity/Emitter - on', (t) => {
 	const emitter = new Emitter<SampleEmissionMap>();
 	const emitted: Array<{ type: string | symbol, sample: number }> = [];
 
-	emitter.on('sample-a', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
+	emitter.on('sample-a', ({ type, sample }) => { emitted.push({ type, sample }) });
 	emitter.on('sample-b', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
 	emitter.on(symbol, ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
 
