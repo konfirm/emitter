@@ -1,5 +1,4 @@
 import { EmissionConfig } from "../Contract/EmissionConfig";
-import { EmissionInterface } from "../Contract/EmissionInterface";
 import { EmitterListenerInterface } from "../Contract/EmitterListenerInterface";
 import { Collection } from "./Collection";
 
@@ -11,7 +10,7 @@ type ListenerRecord<T, K extends keyof T> = {
 
 const trap = ['set', 'defineProperty', 'deleteProperty', 'setPrototypeOf'].reduce((carry, key) => ({ ...carry, [key]: () => true }), {});
 
-export class Emitter<EC extends EmissionConfig<string>> {
+export class Emitter<EC extends EmissionConfig<string>> implements EmitterListenerInterface<EC>{
 	private stash: Array<{ type: keyof EC, handler: (...args: Array<any>) => void, limit: number }> = [];
 
 	on<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
