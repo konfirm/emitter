@@ -3,7 +3,7 @@
 
 # Emitter
 
-A simple and easy to use Emitter library.
+A simple and easy to use Emitter library. Focussing on ease of use for TypeScript it supports full autocompletion and type hints for every emission you've configured;
 
 ## Installation
 
@@ -20,18 +20,19 @@ The main exported member of the @konfirm/emitter package is `Emitter`. For Types
 | `Emitter`                  | The Emitter class, containing al logic to handle (un)registration and emissions                                                 |
 | `EmitterListenerInterface` | _TS only_ interface describing everything but the `emit` method (as that one probably shouldn't be available outside your code) |
 | `EmissionInterface`        | _TS only_ interface describing the "Emissions" received by the registered handlers                                              |
-| `EmissionMapper`           | _TS only_ type to conveniently create the mapping from an `EmissionInterface` implementation class                              |
+| `EmissionConfig`           | _TS only_ type to declare types and their emission structure                                                                    |
+| `EmissionMapper`           | _TS only_ type to create an EventConfig type from an `EmissionInterface` implementation class                                   |
 
 The Emitter class provides the following methods
 
-| method | argument(s)                       | description                                                       |
-| ------ | --------------------------------- | ----------------------------------------------------------------- |
-| `on`   | `type: string, handler: Function` | register a handler to receive emissions of `type`                 |
-| `once` | `type: string, handler: Function` | like `on`, will unregister itself after receiving once            |
-| `off`  | `type: string, handler: Function` | unregister the handler from receiving emissions of `type`         |
-| `emit` | `emission: EmissionInterface`     | emit the emission to the handlers listening for the emission type |
+| method | argument(s)                         | description                                                       |
+| ------ | ----------------------------------- | ----------------------------------------------------------------- |
+| `on`   | `type: string`, `handler: Function` | register a handler to receive emissions of `type`                 |
+| `once` | `type: string`, `handler: Function` | like `on`, will unregister itself after receiving once            |
+| `off`  | `type: string`, `handler: Function` | unregister the handler from receiving emissions of `type`         |
+| `emit` | `emission: EmissionInterface`       | emit the emission to the handlers listening for the emission type |
 
-### Javascript example
+### Javascript
 
 ```js
 // const { Emitter } = require('@konfirm/emitter'); // CommonJS
@@ -43,10 +44,10 @@ emitter.on('my-first-emission', (emission: MyFirstEmission) => {
 	console.log(emission);
 });
 
-emitter.emit('my-first-emission', { type: 'my-first-emission' });
+emitter.emit({ type: 'my-first-emission' });
 ```
 
-### Typescript example
+### Typescript
 ```ts
 import { Emitter, Emission } from '@konfirm/emitter';
 
@@ -71,11 +72,33 @@ emitter.on('my-first-emission', (emission: MyFirstEmission) => {
 	console.log(emission);
 });
 
-emitter.emit('my-first-emission', { type: 'my-first-emission' });
+emitter.emit({ type: 'my-first-emission' });
 ```
 
+#### EmissionMapper
+The `EmissionMapper` type can be used to reduce the manual declaration of the EmissionMap provided as type to `Emitter`. With it the `EmissionMap` in the example above can be defined using:
+
+```ts
+import { Emitter, Emission, EmissionMapper } from '@konfirm/emitter';
+
+//...
+
+type EmissionMap = EmissionMapper<'my-first-emission' | 'first-emission', MyFirstEmission> & EmissionMapper<'my-second-emission' | 'second-emission', MySecondEmission>;
+
+const emitter = new Emitter<EmissionMap>();
+```
+
+Or use the template literal types TypeScript introduced with version 4.1.
+
+```ts
+type EmissionMap = EmissionMapper<`${'my-'|''}first-emission`, MyFirstEmission> & EmissionMapper<`${'my-'|''}second-emission`, MySecondEmission>;
+```
+
+#### EmissionConfig
+While `EmissionMapper` is 
+
 ## License
-MIT License Copyright (c) 2021 Rogier Spieker (Konfirm)
+MIT License Copyright (c) 2021-2022 Rogier Spieker (Konfirm)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
