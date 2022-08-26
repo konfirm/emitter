@@ -1,5 +1,4 @@
-import { EmissionInterface } from "./EmissionInterface";
+import type { Emission } from './Emission';
+import type { EmissionConfig } from './EmissionConfig';
 
-export type EmissionMapper<T extends EmissionInterface> = {
-	[K in T['type']]: T;
-};
+export type EmissionMapper<T extends Emission<string>> = EmissionConfig<T['type'], T>;

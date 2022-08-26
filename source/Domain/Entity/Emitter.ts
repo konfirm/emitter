@@ -1,3 +1,4 @@
+import { EmissionConfig } from "../Contract/EmissionConfig";
 import { EmissionInterface } from "../Contract/EmissionInterface";
 import { EmitterListenerInterface } from "../Contract/EmitterListenerInterface";
 import { Collection } from "./Collection";
@@ -10,36 +11,51 @@ type ListenerRecord<T, K extends keyof T> = {
 
 const trap = ['set', 'defineProperty', 'deleteProperty', 'setPrototypeOf'].reduce((carry, key) => ({ ...carry, [key]: () => true }), {});
 
-export class Emitter<T extends { [K in EmissionInterface['type']]: EmissionInterface }> implements EmitterListenerInterface<T> {
-	on<K extends keyof T = keyof T>(type: K, listener: (emission: T[K]) => void): void {
-		Collection.for<ListenerRecord<T, K>>(this).push({ type, listener, limit: Infinity });
+export class Emitter<EC extends EmissionConfig<string>> {
+	private stash: Array<{ type: keyof EC, handler: (...args: Array<any>) => void, limit: number }> = [];
+
+	on<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
+		Collection.for<ListenerRecord<EC, T>>(this).push({ type, listener, limit: Infinity });
 	}
 
-	once<K extends keyof T = keyof T>(type: K, listener: (emission: T[K]) => void): void {
-		Collection.for<ListenerRecord<T, K>>(this).push({ type, listener, limit: 1 });
+	once<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
+		Collection.for<ListenerRecord<EC, T>>(this).push({ type, listener, limit: 1 });
 	}
 
-	off<K extends keyof T = keyof T>(type: K, listener: (emission: T[K]) => void): void {
-		const collection = Collection.for<ListenerRecord<T, K>>(this);
+	off<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
+		const collection = Collection.for<ListenerRecord<EC, T>>(this);
 
 		collection.pull(...collection.findAll({ type, listener }));
 	}
 
-	emit<K extends keyof T = keyof T>(emission: Omit<T[K], 'timestamp'>): void {
-		const collection = Collection.for<ListenerRecord<T, K>>(this);
-		const candidates = collection.findAll({ type: emission.type as K })
+	emit<T extends keyof EC>(emission: Partial<EC[T]>): void {
+		const collection = Collection.for<ListenerRecord<EC, T>>(this);
+		const candidates = collection.findAll({ type: emission.type as T })
 
-		if (candidates.length) {
-			const timestamp = Date.now();
-			const proxy = new Proxy({ ...emission, timestamp } as T[K], trap);
+		const projection = {
+			...emission,
+			type: emission.type as T,
+			timestamp: Date.now(),
+		};
+		const proxy = new Proxy(projection, {
+			...trap,
+			get(_, key: string | symbol): unknown {
+				return projection[key];
+			},
+			has(_, key: string | symbol): boolean {
+				return key in projection;
+			},
+			ownKeys(): Array<string | symbol> {
+				return Object.keys(projection);
+			},
+		});
 
-			candidates.forEach((record) => {
-				record.listener(proxy);
+		candidates.forEach((record) => {
+			record.listener(proxy as unknown as EC[T]);
 
-				if (--record.limit <= 0) {
-					collection.pull(record);
-				}
-			});
-		}
+			if (--record.limit <= 0) {
+				collection.pull(record);
+			}
+		});
 	}
 }
