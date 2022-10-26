@@ -1,26 +1,20 @@
 import test from 'tape';
-import { EmissionInterface } from '../../../source/Domain/Contract/EmissionInterface';
-import { EmissionMapper } from '../../../source/Domain/Contract/EmissionMapper';
+import { EmissionConfig } from '../../../source/Domain/Contract/EmissionConfig';
 import { Emitter } from '../../../source/Domain/Entity/Emitter';
 
 const symbol = Symbol('sample');
 
-interface SampleEmission extends EmissionInterface {
-	type: `sample-${'a' | 'b'}` | symbol;
-	sample: number;
-}
-
-type SampleEmissionMap = EmissionMapper<SampleEmission>;
+type SampleEmission = EmissionConfig<`sample-${'a' | 'b'}` | symbol, { sample: number }>;
 
 let count = 0;
 
 test('Domain/Entity/Emitter - on', (t) => {
-	const emitter = new Emitter<SampleEmissionMap>();
+	const emitter = new Emitter<SampleEmission>();
 	const emitted: Array<{ type: string | symbol, sample: number }> = [];
 
-	emitter.on('sample-a', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
-	emitter.on('sample-b', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
-	emitter.on(symbol, ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
+	emitter.on('sample-a', ({ type, sample }) => { emitted.push({ type, sample }) });
+	emitter.on('sample-b', ({ type, sample }: SampleEmission['sample-b']) => { emitted.push({ type, sample }) });
+	emitter.on(symbol, ({ type, sample }: SampleEmission[symbol]) => { emitted.push({ type, sample }) });
 
 	emitter.emit({ type: 'sample-a', sample: ++count });
 	emitter.emit({ type: 'sample-a', sample: ++count });
@@ -44,12 +38,12 @@ test('Domain/Entity/Emitter - on', (t) => {
 });
 
 test('Domain/Entity/Emitter - once', (t) => {
-	const emitter = new Emitter<SampleEmissionMap>();
+	const emitter = new Emitter<SampleEmission>();
 	const emitted: Array<{ type: string | symbol, sample: number }> = [];
 
-	emitter.once('sample-a', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
-	emitter.once('sample-b', ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
-	emitter.once(symbol, ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) });
+	emitter.once('sample-a', ({ type, sample }: SampleEmission['sample-a']) => { emitted.push({ type, sample }) });
+	emitter.once('sample-b', ({ type, sample }: SampleEmission['sample-b']) => { emitted.push({ type, sample }) });
+	emitter.once(symbol, ({ type, sample }: SampleEmission[symbol]) => { emitted.push({ type, sample }) });
 
 	emitter.emit({ type: 'sample-a', sample: ++count });
 	emitter.emit({ type: 'sample-a', sample: ++count });
@@ -72,9 +66,9 @@ test('Domain/Entity/Emitter - once', (t) => {
 });
 
 test('Domain/Entity/Emitter - off', (t) => {
-	const emitter = new Emitter<SampleEmissionMap>();
+	const emitter = new Emitter<SampleEmission>();
 	const emitted: Array<{ type: string | symbol, sample: number }> = [];
-	const handler = ({ type, sample }: SampleEmission) => { emitted.push({ type, sample }) };
+	const handler = ({ type, sample }: SampleEmission[keyof SampleEmission]) => { emitted.push({ type, sample }) };
 
 	emitter.on('sample-a', handler);
 	emitter.on('sample-b', handler);
@@ -108,17 +102,17 @@ test('Domain/Entity/Emitter - off', (t) => {
 });
 
 test('Domain/Entity/Emitter - emission', (t) => {
-	const emitter = new Emitter<SampleEmissionMap>();
-	const emitted: Array<SampleEmission> = [];
+	const emitter = new Emitter<SampleEmission>();
+	const emitted: Array<SampleEmission[keyof SampleEmission]> = [];
 
-	emitter.on('sample-a', (emission: SampleEmission) => emitted.push(emission));
+	emitter.on('sample-a', (emission: SampleEmission['sample-a']) => emitted.push(emission));
 	emitter.emit({ type: 'sample-a', sample: ++count });
 
 	t.equal(count, 15, 'total emits is 15');
 
 	const emission = emitted[0];
 	const { type, sample, timestamp } = emission;
-	const typeName = typeof type === 'symbol' ? 'Symbol(sample)' : `"${type}"`;
+	const typeName = typeof type === 'symbol' ? `Symbol(${type.toString()})` : `"${type}"`;
 
 	t.equal(emission.type, 'sample-a', `emission has type ${typeName}`);
 	t.equal(emission.sample, 15, `emission has sample ${sample}`);
@@ -156,6 +150,11 @@ test('Domain/Entity/Emitter - emission', (t) => {
 
 	t.notEqual(Object.getPrototypeOf(emission), null, 'emission prototype is not null');
 	t.equal(Object.getPrototypeOf(proof), null, 'proof prototype is null');
+
+	const keys = Object.keys(emission);
+
+	t.deepEqual(keys, ['type', 'sample', 'timestamp'], 'provides all keys');
+	t.ok(keys.every((key) => key in emission), 'has all keys');
 
 	t.end();
 });
