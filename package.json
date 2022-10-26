@@ -2,7 +2,6 @@
 	"name": "@konfirm/emitter",
 	"version": "1.0.0",
 	"description": "A simple emitter library",
-	"type": "module",
 	"iife": "dist/emitter.js",
 	"main": "dist/emitter.cjs.js",
 	"module": "dist/emitter.es.js",
@@ -25,7 +24,7 @@
 		"test:pretty:nix": "nyc --require ts-node/register tape 'test/**/*.ts' | tap-arc",
 		"test:pretty:win32": "nyc --require ts-node/register tape test/**/*.ts | tap-arc",
 		"prebuild": "tsc --declarationDir temp --declaration true --emitDeclarationOnly true",
-		"build": "rollup -c rollup.config.js",
+		"build": "rollup -c rollup.config.mjs",
 		"postbuild": "rm -rf temp",
 		"prepublish": "npm run build"
 	},
