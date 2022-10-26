@@ -156,7 +156,5 @@ test('Domain/Entity/Emitter - emission', (t) => {
 	t.deepEqual(keys, ['type', 'sample', 'timestamp'], 'provides all keys');
 	t.ok(keys.every((key) => key in emission), 'has all keys');
 
-	console.log(keys);
-
 	t.end();
 });
