@@ -8,10 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 ### Changed
-
-- Improved on TypeScript types
-- Updated dependencies and build flow
-
 ### Deprecated
 ### Removed
 ### Fixed
