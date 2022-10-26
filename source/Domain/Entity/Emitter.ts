@@ -1,3 +1,4 @@
+import { delegate } from "../Contract/Emission";
 import { EmissionConfig } from "../Contract/EmissionConfig";
 import { EmitterListenerInterface } from "../Contract/EmitterListenerInterface";
 import { Collection } from "./Collection";
@@ -27,33 +28,18 @@ export class Emitter<EC extends EmissionConfig<string>> implements EmitterListen
 		collection.pull(...collection.findAll({ type, listener }));
 	}
 
-	emit<T extends keyof EC>(emission: Partial<EC[T]>): void {
+	emit<T extends keyof EC>(emission: Omit<EC[T], 'timestamp'>): void {
 		const collection = Collection.for<ListenerRecord<EC, T>>(this);
-		const candidates = collection.findAll({ type: emission.type as T })
-		const projection = {
-			...emission,
-			type: emission.type as T,
-			timestamp: Date.now(),
-		};
-		const proxy = new Proxy(projection, {
-			...trap,
-			get(_, key: string | symbol): unknown {
-				return projection[key];
-			},
-			has(_, key: string | symbol): boolean {
-				return key in projection;
-			},
-			ownKeys(): Array<string | symbol> {
-				return Object.keys(projection);
-			},
-		});
+		const projection = delegate<EC[T]>(emission);
 
-		candidates.forEach((record) => {
-			record.listener(proxy as unknown as EC[T]);
+		collection
+			.findAll({ type: <T>emission.type })
+			.forEach((record) => {
+				record.listener(projection);
 
-			if (--record.limit <= 0) {
-				collection.pull(record);
-			}
-		});
+				if (--record.limit <= 0) {
+					collection.pull(record);
+				}
+			});
 	}
 }
