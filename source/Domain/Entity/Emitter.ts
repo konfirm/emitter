@@ -11,8 +11,6 @@ type ListenerRecord<T, K extends keyof T> = {
 const trap = ['set', 'defineProperty', 'deleteProperty', 'setPrototypeOf'].reduce((carry, key) => ({ ...carry, [key]: () => true }), {});
 
 export class Emitter<EC extends EmissionConfig<string>> implements EmitterListenerInterface<EC>{
-	private stash: Array<{ type: keyof EC, handler: (...args: Array<any>) => void, limit: number }> = [];
-
 	on<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
 		Collection.for<ListenerRecord<EC, T>>(this).push({ type, listener, limit: Infinity });
 	}
