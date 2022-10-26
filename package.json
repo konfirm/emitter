@@ -2,6 +2,7 @@
 	"name": "@konfirm/emitter",
 	"version": "1.0.0",
 	"description": "A simple emitter library",
+	"type": "module",
 	"iife": "dist/emitter.js",
 	"main": "dist/emitter.cjs.js",
 	"module": "dist/emitter.es.js",
@@ -34,19 +35,19 @@
 	"author": "Rogier Spieker <rogier+npm@konfirm.eu>",
 	"license": "MIT",
 	"devDependencies": {
-		"@rollup/plugin-commonjs": "^22.0.2",
-		"@rollup/plugin-node-resolve": "^13.3.0",
-		"@rollup/plugin-typescript": "^8.4.0",
+		"@rollup/plugin-commonjs": "^23.0.2",
+		"@rollup/plugin-node-resolve": "^15.0.1",
+		"@rollup/plugin-typescript": "^9.0.2",
 		"@types/tape": "^4.13.2",
 		"nyc": "^15.1.0",
-		"rollup": "^2.78.1",
-		"rollup-plugin-dts": "^4.2.2",
-		"rollup-plugin-terser": "^7.0.2",
+		"rollup": "^3.2.3",
+		"rollup-plugin-dts": "^5.0.0",
+		"rollup-plugin-minification": "^0.2.0",
 		"run-script-os": "^1.1.6",
 		"tap-arc": "^0.3.5",
-		"tape": "^5.6.0",
+		"tape": "^5.6.1",
 		"ts-node": "^10.9.1",
 		"tslib": "^2.4.0",
-		"typescript": "^4.8.2"
+		"typescript": "^4.8.4"
 	}
 }

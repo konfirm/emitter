@@ -1,10 +1,11 @@
+import { readFileSync } from 'node:fs';
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve as resolve } from '@rollup/plugin-node-resolve';
 import common from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
+import { terser } from 'rollup-plugin-minification';
 import declaration from 'rollup-plugin-dts'
-import { main, iife, module, types } from './package.json';
 
+const { main, iife, module, types } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url)));
 const defaults = {
 	name: 'Emitter',
 	sourcemap: false,
