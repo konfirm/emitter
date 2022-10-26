@@ -12,11 +12,13 @@ const trap = ['set', 'defineProperty', 'deleteProperty', 'setPrototypeOf'].reduc
 
 export class Emitter<EC extends EmissionConfig<string>> implements EmitterListenerInterface<EC>{
 	on<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
-		Collection.for<ListenerRecord<EC, T>>(this).push({ type, listener, limit: Infinity });
+		Collection.for<ListenerRecord<EC, T>>(this)
+			.push({ type, listener, limit: Infinity });
 	}
 
 	once<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
-		Collection.for<ListenerRecord<EC, T>>(this).push({ type, listener, limit: 1 });
+		Collection.for<ListenerRecord<EC, T>>(this)
+			.push({ type, listener, limit: 1 });
 	}
 
 	off<T extends keyof EC>(type: T, listener: (emission: EC[T]) => void): void {
@@ -28,7 +30,6 @@ export class Emitter<EC extends EmissionConfig<string>> implements EmitterListen
 	emit<T extends keyof EC>(emission: Partial<EC[T]>): void {
 		const collection = Collection.for<ListenerRecord<EC, T>>(this);
 		const candidates = collection.findAll({ type: emission.type as T })
-
 		const projection = {
 			...emission,
 			type: emission.type as T,
